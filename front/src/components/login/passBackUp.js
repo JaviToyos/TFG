@@ -14,11 +14,10 @@ export default function PassBackUp() {
     const params = useParams();
     const navigate = useNavigate();
 
-    const recuperarPassItemVacio = {username: "", email: ""};
+    const recuperarPassItemVacio = { username: "", email: "" };
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [recuperarPassItem, setRecuperarPassItem] = useState(recuperarPassItemVacio);
-    const [confirmacion, setConfirmacion] = useState(false);
 
     useEffect(() => {
         // if (!esNuevo) {
@@ -28,11 +27,13 @@ export default function PassBackUp() {
     }, []);
 
     function recuperarPass() {
-        setRecuperarPassItem(username, email);
+        recuperarPassItemVacio.username = username;
+        recuperarPassItemVacio.email = email;
+        setRecuperarPassItem(recuperarPassItemVacio);
         LoginService.recuperarPass(recuperarPassItem).then(res => {
-            setConfirmacion(true);
+            confirmOk();
         }).catch(res => {
-            //funcion de datos erroneos
+            confirmFailure();
         });
     }
 
@@ -45,12 +46,19 @@ export default function PassBackUp() {
     }
 
     function login() {
-        navigate("../../login"); // navega a URL para creacion de nuevo cliente
+        navigate("../../login");
+    }
+
+    function confirmOk() {
+        navigate("backUpOk");
+    }
+
+    function confirmFailure() {
+        navigate("backUpFail");
     }
 
     return (
         <div>
-            {/* Contenido de la página */}
             <div className="form login" style={{border: '1px solid black', padding: '10px', margin: '10%'}}>
                 <div className="text-3xl text-800 font-bold mb-4"> Recuperar contraseña</div>
 
@@ -65,15 +73,6 @@ export default function PassBackUp() {
                             tooltip="Volver al login" tooltipOptions={{position: 'bottom'}}/>
                 </div>
             </div>
-
-            {confirmacion &&
-                <div className="recuadro"
-                     style={{border: '1px solid black', padding: '10px', margin: '40%', backgroundColor: 'lightgray'}}>
-                    <p>El correo de recuperación se ha enviado correctamente.</p>
-                    <Button label="Aceptar" icon="pi pi-plus" className="p-button-lg" onClick={login}
-                            tooltip="Volver al login" tooltipOptions={{position: 'bottom'}}/>
-                </div>
-            }
 
         </div>
     );

@@ -8,7 +8,10 @@ import {
 import Home from './components/home';
 
 import Login from "./components/login/login";
+import LoginFail from "./components/login/loginFail";
 import RecuperarPass from "./components/login/passBackUp";
+import ConfirmacionRecuperarPassOk from "./components/login/backUpOk";
+import ConfirmacionRecuperarPassFailure from "./components/login/backUpFail";
 
 import CategoriaListado from "./components/categoria/categoriaListado";
 import CategoriaDetalle from "./components/categoria/categoriaDetalle";
@@ -124,6 +127,9 @@ function App() {
             <Route path="login" >
               <Route index element={<Login />} />
               <Route path="recuperarPass" element={<RecuperarPass/>} />
+              <Route path="recuperarPass/backUpOk" element={<ConfirmacionRecuperarPassOk/>} />
+              <Route path="recuperarPass/backUpFail" element={<ConfirmacionRecuperarPassFailure/>} />
+              <Route path="loginFail" element={<LoginFail/>} />
             </Route>
 
           </Routes>

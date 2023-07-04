@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {Cookies} from "react-cookie";
+
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Dropdown } from 'primereact/dropdown';
@@ -12,10 +14,8 @@ import {ProgressSpinner} from "primereact/progressspinner";
 
 export default function Login() {
     const navigate = useNavigate();
-
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [cargando, setCargando] = useState(false);
 
     useEffect(() => {
         // if (!esNuevo) {
@@ -27,8 +27,17 @@ export default function Login() {
     function iniciarSesion(){
         const loginItem = {username: username, passwd: password};
         LoginService.iniciarSesion(loginItem).then(res => {
+            setCookie('token', res.data.token);
+            setCookie('usuario', res.data.user);
             home();
+        }).catch(res => {
+            loginFail();
         });
+    }
+
+    function setCookie(name, data){
+        const cookies = new Cookies();
+        cookies.set(name, data);
     }
 
     function onUsernameChange(e){
@@ -39,16 +48,19 @@ export default function Login() {
     }
 
     function recuperarPass() {
-        navigate("recuperarPass"); // navega a URL para creacion de nuevo cliente
+        navigate("recuperarPass");
     }
 
     function home() {
-        navigate("../home"); // navega a URL para creacion de nuevo cliente
+        navigate("../home");
+    }
+
+    function loginFail() {
+        navigate("loginFail");
     }
 
     return (
         <div>
-            {/* Contenido de la página */}
             <div className="form login" style= {{border:'1px solid black', padding:'10px', margin:'10%'}}>
                 <div className="text-3xl text-800 font-bold mb-4"> Iniciar Sesión </div>
 

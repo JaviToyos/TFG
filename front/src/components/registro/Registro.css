@@ -1,0 +1,88 @@
+.form {
+    width: 30rem;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-header h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.input-field {
+    margin: 15px;
+    width: 100%;
+}
+
+
+.input-field .p-float-label {
+    width: 100%;
+}
+
+.input-field input {
+    width: 100%;
+}
+
+.p-float-label label {
+    font-size: 14px;
+    color: #888;
+}
+
+.error-message {
+    color: #d9534f;
+    font-size: 14px;
+    margin-top: 5px;
+    margin-bottom:1rem;
+}
+
+.p-button-rounded {
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.forgot-password {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.p-button-link {
+    font-size: 14px;
+    color: #007bff;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.iconSignUp {
+    margin-left: 0.5rem;
+}
+
+.empty {
+    border-color: #d9534f !important;
+}

@@ -1,0 +1,71 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-self: auto;
+}
+
+.p-field,
+.p-p-3 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.p-field label,
+.p-p-3 label {
+    flex-shrink: 0;
+    width: 15%;
+    text-align: right;
+}
+
+.p-field input,
+.p-field InputText,
+.p-field p,
+.p-p-3 .boton,
+.p-p-3 .botonUpdate {
+    width: 40%;
+    margin-left: 2.5%;
+}
+
+.p-field p {
+    text-align: center;
+    font-weight: bold;
+}
+
+.p-field-p {
+    text-align: center;
+    font-weight: bold;
+}
+
+.table-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.p-datatable thead {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.p-datatable-row {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+.table-cell {
+    flex: 1;
+    padding: 5px;
+}
+
+.p-divider {
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+
+.botonModal {
+    margin-left: 9.5rem;
+}
+
+

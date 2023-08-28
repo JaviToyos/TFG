@@ -39,21 +39,6 @@ public class MovimientoController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/modify")
-    public ResponseEntity<String> modifyNordigenMovimientos(@RequestBody Movimiento movimiento) {
-        try {
-            String mensajeMovimientosModificados = iMovimientoService.modifyNordigen(movimiento);
-            if (mensajeMovimientosModificados.equals(Messages.MOVIMIENTOS_MODIFICADO_OK.getMessage()))
-                return new ResponseEntity<>(Messages.MOVIMIENTOS_MODIFICADO_OK.getMessage(), HttpStatus.OK);
-
-        } catch (final IllegalArgumentException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseBody
     @PostMapping(value = "/findByCuenta")
     public ResponseEntity<?> findByIdCuenta(@RequestBody FindMovimientoRequest request) {
         try {

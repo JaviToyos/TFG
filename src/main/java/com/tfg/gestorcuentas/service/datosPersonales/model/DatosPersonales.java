@@ -3,6 +3,8 @@ package com.tfg.gestorcuentas.service.datosPersonales.model;
 import com.tfg.gestorcuentas.data.entity.PersonaEntity;
 import com.tfg.gestorcuentas.data.entity.UsuarioEntity;
 
+import java.util.Objects;
+
 public class DatosPersonales {
 
     private final PersonaEntity persona;
@@ -50,5 +52,18 @@ public class DatosPersonales {
         public DatosPersonales build() {
             return new DatosPersonales(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DatosPersonales that = (DatosPersonales) o;
+        return Objects.equals(persona, that.persona) && Objects.equals(usuario, that.usuario);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(persona, usuario);
     }
 }

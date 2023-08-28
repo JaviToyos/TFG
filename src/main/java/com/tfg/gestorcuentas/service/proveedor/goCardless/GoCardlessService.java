@@ -29,7 +29,6 @@ public class GoCardlessService {
 
     @Value("${application.url}")
     private String applicationURL;
-
     private final IProveedorJPARepository iProveedorJPARepository;
     private final IParametroJPARepository iParametroJPARepository;
 

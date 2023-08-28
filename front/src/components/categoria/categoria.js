@@ -44,7 +44,7 @@ export default function Categoria() {
             </div>
 
             <div style={{flex: '1 1 auto'}}>
-                <DataTable value={categoriaList}>
+                <DataTable value={categoriaList} paginator rows={3} >
                     <Column field="id" hidden={true}/>
                     <Column field="nombre" header="Nombre"
                             style={{width: 'auto', flexGrow: 1, overflowWrap: 'break-word'}}/>

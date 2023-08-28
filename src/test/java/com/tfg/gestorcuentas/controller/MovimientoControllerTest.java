@@ -76,52 +76,6 @@ public class MovimientoControllerTest {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    @Test
-    public void testModifyMovimientoOK() {
-        MovimientoEntity movimientoEntity = buildMovimientoEntityToModify();
-        CuentaBancariaEntity cuentaBancariaEntity = buildCuentaBancariaEntity();
-        Movimiento movimiento = new Movimiento(cuentaBancariaEntity, movimientoEntity, Collections.emptyList());
-
-        given(iMovimientoService.modifyNordigen(movimiento)).willReturn(Messages.MOVIMIENTOS_MODIFICADO_OK.getMessage());
-
-        ResponseEntity<?> response = movimientoController.modifyNordigenMovimientos(movimiento);
-
-        verify(iMovimientoService).modifyNordigen(movimiento);
-
-        Assert.assertEquals(Messages.MOVIMIENTOS_MODIFICADO_OK.getMessage(), response.getBody());
-        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    public void testModifyMovimientoInternalServerError() {
-        MovimientoEntity movimientoEntity = buildMovimientoEntityInvalid();
-        CuentaBancariaEntity cuentaBancariaEntity = buildCuentaBancariaEntity();
-        Movimiento movimiento = new Movimiento(cuentaBancariaEntity, movimientoEntity, Collections.emptyList());
-
-        given(iMovimientoService.modifyNordigen(movimiento)).willThrow(IllegalArgumentException.class);
-
-        ResponseEntity<?> response = movimientoController.modifyNordigenMovimientos(movimiento);
-
-        verify(iMovimientoService).modifyNordigen(movimiento);
-
-        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    public void testModifyMovimientoBadRequest() {
-        MovimientoEntity movimientoEntity = buildMovimientoEntityToModify();
-        CuentaBancariaEntity cuentaBancariaEntity = buildCuentaBancariaEntity();
-        Movimiento movimiento = new Movimiento(cuentaBancariaEntity, movimientoEntity, Collections.emptyList());
-
-        given(iMovimientoService.modifyNordigen(movimiento)).willReturn(StringUtils.EMPTY);
-
-        ResponseEntity<?> response = movimientoController.modifyNordigenMovimientos(movimiento);
-
-        verify(iMovimientoService).modifyNordigen(movimiento);
-
-        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
 
     private MovimientoEntity buildMovimientoEntityToSave() {
         Set<CategoriaEntity> categoriaEntitySet = new HashSet<>();
@@ -133,7 +87,7 @@ public class MovimientoControllerTest {
         entity.setCuentaBancaria(buildCuentaBancariaEntity());
         entity.setCategoriaEntitySet(categoriaEntitySet);
         entity.setIdTransaccion("transactionId");
-        entity.setCantidad(123.00);
+        entity.setCantidad("123,00");
         entity.setDivisa("Divisa");
         entity.setDestinatario("ES23456789876545");
         entity.setFecha(new Date());

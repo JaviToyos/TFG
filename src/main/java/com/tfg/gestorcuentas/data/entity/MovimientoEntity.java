@@ -30,13 +30,13 @@ public class MovimientoEntity implements Serializable {
     @Column(name = "id_transaccion")
     private String idTransaccion;
 
-    @Column(name = "cantidad")
-    private Double cantidad;
+    @Column(name = "cantidad", length = 16)
+    private String cantidad;
 
-    @Column(name = "divisa")
+    @Column(name = "divisa", length = 16)
     private String divisa;
 
-    @Column(name = "destinatario")
+    @Column(name = "destinatario", length = 48)
     private String destinatario;
 
     @Column(name = "fecha")
@@ -69,6 +69,22 @@ public class MovimientoEntity implements Serializable {
         this.categoriaEntitySet = categoriaEntitySet;
     }
 
+    public MovimientoEntity() {
+    }
+
+    public MovimientoEntity(Integer id, CuentaBancariaEntity cuentaBancaria, Set<CategoriaEntity> categoriaEntitySet, String informacionMovimiento, String idTransaccion, String cantidad, String divisa, String destinatario, Date fecha, Integer borrado) {
+        this.id = id;
+        this.cuentaBancaria = cuentaBancaria;
+        this.categoriaEntitySet = categoriaEntitySet;
+        this.informacionMovimiento = informacionMovimiento;
+        this.idTransaccion = idTransaccion;
+        this.cantidad = cantidad;
+        this.divisa = divisa;
+        this.destinatario = destinatario;
+        this.fecha = fecha;
+        this.borrado = borrado;
+    }
+
     public String getIdTransaccion() {
         return idTransaccion;
     }
@@ -77,11 +93,11 @@ public class MovimientoEntity implements Serializable {
         this.idTransaccion = idTransaccion;
     }
 
-    public Double getCantidad() {
+    public String getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(Double cantidad) {
+    public void setCantidad(String cantidad) {
         this.cantidad = cantidad;
     }
 

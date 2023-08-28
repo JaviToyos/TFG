@@ -31,11 +31,8 @@ public class CriterioController {
             if (criterioModificado.equals(Messages.CRITERIO_SAVED.getMessage()))
                return new ResponseEntity<>(Messages.CRITERIO_SAVED.getMessage(), HttpStatus.OK);
 
-        } catch (final NoSuchElementException exception) {
+        } catch (final NoSuchElementException | IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-        } catch (final IllegalArgumentException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -25,7 +25,7 @@ const Navbar = ({ logged }) => {
             {
                 label: 'Categorias',
                 icon: 'pi pi-fw pi-list',
-                url: '/categoria'
+                url: '/categorias'
             }
         ]
         : [

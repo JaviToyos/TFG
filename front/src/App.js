@@ -13,7 +13,7 @@ import RecuperarPass from "./components/login/passBackUp";
 import Logout from "./components/login/logout";
 import Registro from "./components/registro/registro";
 
-import PersonalData from "./components/personalData/personalData";
+import DatosPersonales from "./components/datosPersonales/datosPersonales";
 
 import CuentaBancaria from "./components/cuentaBancaria/cuentaBancaria";
 
@@ -59,7 +59,7 @@ function App() {
                         </Route>
 
                         <Route path="datosPersonales">
-                            <Route index element={<PersonalData/>}/>
+                            <Route index element={<DatosPersonales/>}/>
                         </Route>
 
                         <Route path="cuentaBancaria">

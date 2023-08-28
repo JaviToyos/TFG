@@ -200,6 +200,15 @@ public class LoginServiceTest {
         loginService.recuperarPasswdUsuario(recuperarPass);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testRecuperarPassRequestInvalid() throws MessagingException {
+        RecuperarPass recuperarPass = RecuperarPass.builder()
+                .withEmail(EMAIL)
+                .withUsername(null)
+                .build();
+        loginService.recuperarPasswdUsuario(recuperarPass);
+    }
+
     @Test(expected = NoSuchElementException.class)
     public void testRecuperarPassPersonNotFound() throws MessagingException {
         RecuperarPass recuperarPass = RecuperarPass.builder()

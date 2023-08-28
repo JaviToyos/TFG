@@ -38,6 +38,7 @@ public enum MessageErrors {
     PROVIDER_CREDENTIALS_NOT_FOUND("No se han podido encontrar las credenciales del proveedor."),
 
     CATEGORIA_NOT_FOUND("No se ha podido encontrar la categoría"),
+    CATEGORIA_ALREADY_EXISTS("La categoria ya existe"),
     ID_CATEGORIA_NULL("El id de la categoria es null"),
 
     CRITERIO_NOT_FOUND("No se ha podido encontrar el criterio"),

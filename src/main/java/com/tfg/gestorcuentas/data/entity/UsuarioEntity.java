@@ -16,14 +16,25 @@ public class UsuarioEntity implements Serializable {
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
     private PersonaEntity persona;
 
-    @Column(name = "username")
+    @Column(name = "username", length = 48)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 48)
     private String password;
 
     @Column(name = "borrado")
     private Integer borrado;
+
+    public UsuarioEntity() {
+
+    }
+
+    public UsuarioEntity(Integer id, String username, String password, Integer borrado) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.borrado = borrado;
+    }
 
     public Integer getId() {
         return id;

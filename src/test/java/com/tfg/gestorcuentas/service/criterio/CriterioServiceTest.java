@@ -16,6 +16,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
@@ -171,6 +172,40 @@ public class CriterioServiceTest {
         criterioService.findByCategoria(null);
     }
 
+    @Test
+    public void testDelete() {
+        CriterioEntity criterio = new CriterioEntity();
+        criterio.setId(1);
+        criterio.setNombre("NBA");
+        criterio.setBorrado(0);
+
+        CriterioEntity criterioDeleted = new CriterioEntity();
+        criterioDeleted.setId(1);
+        criterioDeleted.setNombre("NBA");
+        criterioDeleted.setBorrado(1);
+
+        given(repository.findById(1)).willReturn(Optional.of(criterio));
+        given(repository.save(criterioDeleted)).willReturn(criterioDeleted);
+
+        String msg = criterioService.delete(1);
+
+        verify(repository).findById(1);
+        verify(repository).save(criterioDeleted);
+
+        Assert.assertEquals(Messages.CRITERIO_MODIFIED.getMessage(), msg);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testDeleteCriterioNotFound() {
+        given(repository.findById(1)).willReturn(Optional.empty());
+        criterioService.delete(1);
+        verify(repository).findById(1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeleteCriterioIdInvalid() {
+        criterioService.delete(null);
+    }
 
     private UsuarioEntity buildUsuarioEntity() {
         UsuarioEntity entity = new UsuarioEntity();

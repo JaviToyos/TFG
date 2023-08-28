@@ -42,7 +42,7 @@ public class RegistroServiceTest {
     }
 
     @Test
-    public void shouldRegistrar() {
+    public void testRegistrar() {
         PersonaEntity persona = buildPersonaEntity();
         UsuarioEntity usuario = buildUsuarioEntity();
 
@@ -69,8 +69,38 @@ public class RegistroServiceTest {
         Assert.assertEquals(Messages.GUARDADO_OK.getMessage(), mensajeRegistroOk);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegistrarPersonaInvalid() {
+        PersonaEntity persona = buildPersonaEntityInvalid();
+        UsuarioEntity usuario = buildUsuarioEntity();
+
+        Registro registro = Registro.builder()
+                .withPersona(persona)
+                .withUsuario(usuario)
+                .build();
+
+        registroService.registro(registro);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegistrarUsuarioInvalid() {
+        PersonaEntity persona = buildPersonaEntity();
+        UsuarioEntity usuario = buildUsuarioEntityInvalid();
+
+        Registro registro = Registro.builder()
+                .withPersona(persona)
+                .withUsuario(usuario)
+                .build();
+
+        given(iPersonaJPARepository.findByDni(DNI)).willReturn(Optional.empty());
+
+        registroService.registro(registro);
+
+        verify(iPersonaJPARepository).findByDni(DNI);
+    }
+
     @Test(expected=IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenPersonaExists() {
+    public void testThrowIllegalArgumentExceptionWhenPersonaExists() {
         PersonaEntity persona = buildPersonaEntity();
         UsuarioEntity usuario = buildUsuarioEntity();
 
@@ -87,7 +117,7 @@ public class RegistroServiceTest {
     }
 
     @Test(expected=IllegalArgumentException.class)
-    public void shouldThrowIllegalArgumentExceptionWhenUsuarioExists() {
+    public void testThrowIllegalArgumentExceptionWhenUsuarioExists() {
         PersonaEntity persona = buildPersonaEntity();
         UsuarioEntity usuario = buildUsuarioEntity();
 
@@ -116,9 +146,29 @@ public class RegistroServiceTest {
         return persona;
     }
 
+    private static PersonaEntity buildPersonaEntityInvalid() {
+        PersonaEntity persona = new PersonaEntity();
+        persona.setDni(DNI);
+        persona.setNombre(null);
+        persona.setApellidos(APELLIDOS_PERSONA);
+        persona.setEmail(EMAIL_PERSONA);
+        persona.setBorrado(0);
+
+        return persona;
+    }
+
     private static UsuarioEntity buildUsuarioEntity() {
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setUsername(USERNAME);
+        usuario.setPassword(PASSWD);
+        usuario.setBorrado(0);
+
+        return usuario;
+    }
+
+    private static UsuarioEntity buildUsuarioEntityInvalid() {
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setUsername(null);
         usuario.setPassword(PASSWD);
         usuario.setBorrado(0);
 

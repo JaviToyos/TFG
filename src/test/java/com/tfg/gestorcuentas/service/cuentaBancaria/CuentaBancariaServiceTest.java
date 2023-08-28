@@ -20,9 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -258,6 +256,19 @@ public class CuentaBancariaServiceTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void saveWhenUserNotValid() {
+        CuentaBancaria cuentaBancaria = CuentaBancaria.builder()
+                .withAccountBalance(provideAccountBalance())
+                .withAccountDetails(provideAccountDetailsNotValid())
+                .withAccountID("accountId")
+                .withNombre("My account")
+                .withProveedor(provideProovedor())
+                .withUsuario(null)
+                .build();
+        cuentaBancariaService.saveNordigen(cuentaBancaria);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void saveWhenAccountBalanceNotValid() {
         CuentaBancaria cuentaBancaria = CuentaBancaria.builder()
                 .withAccountBalance(provideAccountBalanceNotValid())
@@ -283,6 +294,45 @@ public class CuentaBancariaServiceTest {
                 .build();
 
         cuentaBancariaService.saveNordigen(cuentaBancaria);
+    }
+
+    @Test
+    public void testFindByUsername() {
+        UsuarioEntity usuario = provideUsuario();
+        CuentaBancariaEntity entity = new CuentaBancariaEntity();
+        entity.setAccountID("accountId");
+        entity.setCantidad(123456.00);
+        entity.setBorrado(0);
+        entity.setIban("ES208054346756565756");
+        entity.setFecha(new Date());
+        entity.setMoneda("Euro");
+        entity.setProveedor(provideProovedor());
+        entity.setUsuario(provideUsuario());
+        entity.setNombre("My account");
+
+        given(iUsuarioJPARepository.findByUsername("javier")).willReturn(Optional.of(usuario));
+        given(cuentaBancariaJPARepository.findByUsuarioAndBorrado(usuario, 0)).willReturn(Collections.singletonList(entity));
+
+        List<CuentaBancariaEntity> expected = cuentaBancariaService.findByUsername("javier");
+
+        verify(iUsuarioJPARepository).findByUsername("javier");
+        verify(cuentaBancariaJPARepository).findByUsuarioAndBorrado(usuario, 0);
+
+        Assert.assertEquals(Collections.singletonList(entity), expected);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testFindByUsernameNoExisting() {
+        given(iUsuarioJPARepository.findByUsername("javier")).willReturn(Optional.empty());
+
+        cuentaBancariaService.findByUsername("javier");
+
+        verify(iUsuarioJPARepository).findByUsername("javier");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindByUsernameDataInvalid() {
+        cuentaBancariaService.findByUsername(null);
     }
 
     @Test

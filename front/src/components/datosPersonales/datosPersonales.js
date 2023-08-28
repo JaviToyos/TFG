@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {useNavigate} from "react-router-dom";
 import {Cookies} from "react-cookie";
 
 import {Button} from 'primereact/button';
@@ -8,8 +9,11 @@ import PersonalDataService from "../../services/personalDataService";
 import "./DatosPersonales.css";
 import {InputText} from "primereact/inputtext";
 import md5 from "md5";
+import {Dialog} from "primereact/dialog";
 
-export default function PersonalData() {
+export default function DatosPersonales() {
+    const navigate = useNavigate();
+
     const datosVacios = {
         persona: {dni: "", nombre: "", apellidos: "", email: ""},
         usuario: {username: "", password: ""}
@@ -22,6 +26,8 @@ export default function PersonalData() {
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [editing, setEditing] = useState(false);
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         PersonalDataService.buscarDatos(getCookie("usuario"))
@@ -36,17 +42,19 @@ export default function PersonalData() {
     function updateDatosPersonales() {
         const datosPersonales = {
             persona: {dni: datos.persona.dni, nombre: nombre, apellidos: apellidos, email: email},
-            usuario: {username: datos.usuario.username, password: md5(password)}
+            usuario: {username: datos.usuario.username, password: password}
         };
 
         if (datosPersonales.persona.nombre === "") datosPersonales.persona.nombre = datos.persona.nombre;
         if (datosPersonales.persona.apellidos === "") datosPersonales.persona.apellidos = datos.persona.apellidos;
         if (datosPersonales.persona.email === "") datosPersonales.persona.email = datos.persona.email;
         if (datosPersonales.usuario.password === "") datosPersonales.usuario.password = datos.usuario.password;
+        else datosPersonales.usuario.password = md5(datosPersonales.usuario.password);
 
         PersonalDataService.updateDatos(datosPersonales).then(() => {
             setEditing(false);
-            setMessage("Se han actualizado los datos correctamente.");
+            setSuccessMessage("Se han actualizado los datos correctamente.");
+            setShowSuccessDialog(true);
         }).catch(() => {
             setError("No se han podido actualizar los datos personales, intentalo de nuevo.");
         });
@@ -72,6 +80,11 @@ export default function PersonalData() {
         setEditing(!editing);
     }
 
+    const hideSuccessDialog = () => {
+        setShowSuccessDialog(false);
+        navigate('/datosPersonales');
+    };
+
     return (
         <div className="surface-card border-round shadow-2 p-4 m-auto" style={{width: '50%'}}>
             <div className="p-field">
@@ -90,7 +103,7 @@ export default function PersonalData() {
             <div className="p-field">
                 <label htmlFor="Contraseña">Contraseña</label>
                 <InputText type="password" placeholder="password" value={datos.usuario.password} readOnly/>
-                {editing === true && <InputText type="text" placeholder={datos.usuario.password} value={password}
+                {editing === true && <InputText type="text" placeholder={"Introduce tu contraseña"} value={password}
                                                 onChange={onPasswordChange}/>}
             </div>
 
@@ -145,9 +158,23 @@ export default function PersonalData() {
                     </div>
                 }
             </div>
-
-            {message && <div className="error-message">{message}</div>}
             {error && <div className="error-message">{error}</div>}
+
+            <Dialog
+                visible={showSuccessDialog}
+                onHide={hideSuccessDialog}
+                header="Éxito"
+                modal
+                style={{width: '40vw'}}
+                footer={
+                    <div>
+                        <Button label="Cerrar" onClick={hideSuccessDialog}/>
+                    </div>
+                }>
+                <div className="success-dialog-content">
+                    <p>{successMessage}</p>
+                </div>
+            </Dialog>
         </div>
     );
 }

@@ -4,11 +4,14 @@ import com.tfg.gestorcuentas.data.entity.*;
 import com.tfg.gestorcuentas.data.repository.ICategoriaJPARepository;
 import com.tfg.gestorcuentas.data.repository.ICriterioJPARepository;
 import com.tfg.gestorcuentas.data.repository.IMovimientoJPARepository;
+import com.tfg.gestorcuentas.service.categoria.model.CategoriaDTO;
 import com.tfg.gestorcuentas.service.movimiento.model.Movimiento;
+import com.tfg.gestorcuentas.service.movimiento.model.MovimientoDTO;
 import com.tfg.gestorcuentas.utils.Messages;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -32,7 +35,6 @@ public class MovimientoServiceTest {
     @Test
     public void testSaveMovimiento() {
         MovimientoEntity movimientoEntity = buildMovimientoEntity();
-        MovimientoEntity movimientoEntityToSave = buildMovimientoEntityToSave();
         CuentaBancariaEntity cuentaBancariaEntity = buildCuentaBancariaEntity();
         Movimiento movimiento = new Movimiento(cuentaBancariaEntity, movimientoEntity, Collections.emptyList());
         CategoriaEntity categoria = buildCategoriaEntity();
@@ -40,13 +42,13 @@ public class MovimientoServiceTest {
 
         given(iCategoriaJPARepository.findByUsuario_Id(1)).willReturn(Collections.singletonList(categoria));
         given(iCriterioJPARepository.findByCategoria_IdAndBorrado(categoria.getId(), 0)).willReturn(Collections.singletonList(criterio));
-        given(iMovimientoJPARepository.save(movimientoEntityToSave)).willReturn(movimientoEntityToSave);
+        ArgumentCaptor<MovimientoEntity> argument = ArgumentCaptor.forClass(MovimientoEntity.class);
 
         String msg = movimientoService.saveNordigen(movimiento);
 
         verify(iCategoriaJPARepository).findByUsuario_Id(1);
         verify(iCriterioJPARepository).findByCategoria_IdAndBorrado(categoria.getId(), 0);
-        verify(iMovimientoJPARepository).save(movimientoEntityToSave);
+        verify(iMovimientoJPARepository).save(argument.capture());
 
         Assert.assertEquals(Messages.MOVIMIENTOS_GUARDADO_OK.getMessage(), msg);
     }
@@ -69,35 +71,47 @@ public class MovimientoServiceTest {
         movimientoService.saveNordigen(movimiento);
     }
 
+    @Test
+    public void testFindByIdCuenta() {
+        MovimientoEntity mov = buildMovimientoEntity();
+        CategoriaDTO categoriaDTO = new CategoriaDTO();
+        categoriaDTO.setId(1);
+        categoriaDTO.setNombre("Deporte");
+
+        MovimientoDTO movimientoDTO = new MovimientoDTO();
+        movimientoDTO.setId(mov.getId());
+        movimientoDTO.setCantidad(mov.getCantidad());
+        movimientoDTO.setDivisa(mov.getDivisa());
+        movimientoDTO.setFecha(mov.getFecha());
+        movimientoDTO.setInformacionMovimiento(mov.getInformacionMovimiento());
+        movimientoDTO.setDestinatario(mov.getDestinatario());
+        movimientoDTO.setIdTransaccion(mov.getIdTransaccion());
+        movimientoDTO.setCategorias(Collections.singletonList(categoriaDTO));
+
+        given(iMovimientoJPARepository.findByCuentaBancaria_Id(1)).willReturn(Collections.singletonList(mov));
+
+        List<MovimientoDTO> movimientoEntityList = movimientoService.findByIdCuenta(1);
+
+        verify(iMovimientoJPARepository).findByCuentaBancaria_Id(1);
+
+        Assert.assertEquals(Collections.singletonList(movimientoDTO), movimientoEntityList);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFindByIdCuentaIdNull() {
+        movimientoService.findByIdCuenta(null);
+    }
+
     private MovimientoEntity buildMovimientoEntity() {
         Set<CategoriaEntity> categoriaEntitySet = new HashSet<>();
         categoriaEntitySet.add(buildCategoriaEntity());
 
         MovimientoEntity entity = new MovimientoEntity();
+        entity.setId(1);
         entity.setCuentaBancaria(buildCuentaBancariaEntity());
         entity.setCategoriaEntitySet(categoriaEntitySet);
         entity.setIdTransaccion("transactionId");
-        entity.setCantidad(123.00);
-        entity.setDivisa("Divisa");
-        entity.setDestinatario("ES23456789876545");
-        entity.setFecha(new Date());
-        entity.setInformacionMovimiento("NBA");
-        entity.setBorrado(0);
-
-        return entity;
-    }
-
-    private MovimientoEntity buildMovimientoEntityToSave() {
-        Set<CategoriaEntity> categoriaEntitySet = new HashSet<>();
-        CategoriaEntity categoria = new CategoriaEntity();
-        categoria.setId(1);
-        categoriaEntitySet.add(categoria);
-
-        MovimientoEntity entity = new MovimientoEntity();
-        entity.setCuentaBancaria(buildCuentaBancariaEntity());
-        entity.setCategoriaEntitySet(categoriaEntitySet);
-        entity.setIdTransaccion("transactionId");
-        entity.setCantidad(123.00);
+        entity.setCantidad("123.00");
         entity.setDivisa("Divisa");
         entity.setDestinatario("ES23456789876545");
         entity.setFecha(new Date());

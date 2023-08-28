@@ -1,7 +1,6 @@
 package com.tfg.gestorcuentas.controller;
 
 import com.tfg.gestorcuentas.data.entity.CategoriaEntity;
-import com.tfg.gestorcuentas.data.entity.CuentaBancariaEntity;
 import com.tfg.gestorcuentas.service.categoria.ICategoriaService;
 import com.tfg.gestorcuentas.service.categoria.model.Categoria;
 import com.tfg.gestorcuentas.utils.Messages;
@@ -58,11 +57,8 @@ public class CategoriaController {
             List<CategoriaEntity> categoriaEntityList = iCategoriaService.findByUsername(username);
             if (categoriaEntityList != null)
                 return new ResponseEntity<>(categoriaEntityList, HttpStatus.OK);
-        } catch (final NoSuchElementException exception) {
+        } catch (final NoSuchElementException | IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-        } catch (final IllegalArgumentException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

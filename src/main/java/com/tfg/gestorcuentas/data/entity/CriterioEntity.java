@@ -16,11 +16,21 @@ public class CriterioEntity implements Serializable {
     @JoinColumn(name = "id_categoria", referencedColumnName = "id")
     private CategoriaEntity categoria;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 48)
     private String nombre;
 
     @Column(name = "borrado")
     private Integer borrado;
+
+    public CriterioEntity() {
+    }
+
+    public CriterioEntity(Integer id, CategoriaEntity categoria, String nombre, Integer borrado) {
+        this.id = id;
+        this.categoria = categoria;
+        this.nombre = nombre;
+        this.borrado = borrado;
+    }
 
     public Integer getId() {
         return id;

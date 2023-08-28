@@ -5,6 +5,7 @@ import com.tfg.gestorcuentas.service.login.model.LoggedUser;
 import com.tfg.gestorcuentas.service.login.model.Login;
 import com.tfg.gestorcuentas.service.login.model.RecuperarPass;
 import com.tfg.gestorcuentas.utils.Messages;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-
-;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoginControllerTest {
@@ -106,7 +104,7 @@ public class LoginControllerTest {
     }
 
     @Test
-    public void testRecuperarPassIncorrecto(){
+    public void testRecuperarPassIllegalArgument(){
         RecuperarPass recuperarPass = RecuperarPass.builder()
                 .withUsername("pepe")
                 .withEmail(MAIL)
@@ -119,5 +117,37 @@ public class LoginControllerTest {
         verify(loginService).recuperarPasswdUsuario(recuperarPass);
 
         Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, passBackup.getStatusCode());
+    }
+
+    @Test
+    public void testRecuperarPassIllegalState(){
+        RecuperarPass recuperarPass = RecuperarPass.builder()
+                .withUsername("pepe")
+                .withEmail(MAIL)
+                .build();
+
+        given(loginService.recuperarPasswdUsuario(recuperarPass)).willThrow(IllegalStateException.class);
+
+        ResponseEntity<?> passBackup = loginController.passBackup(recuperarPass);
+
+        verify(loginService).recuperarPasswdUsuario(recuperarPass);
+
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, passBackup.getStatusCode());
+    }
+
+    @Test
+    public void testRecuperarPassBadRequest(){
+        RecuperarPass recuperarPass = RecuperarPass.builder()
+                .withUsername("pepe")
+                .withEmail(MAIL)
+                .build();
+
+        given(loginService.recuperarPasswdUsuario(recuperarPass)).willReturn(StringUtils.EMPTY);
+
+        ResponseEntity<?> passBackup = loginController.passBackup(recuperarPass);
+
+        verify(loginService).recuperarPasswdUsuario(recuperarPass);
+
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, passBackup.getStatusCode());
     }
 }

@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests().requestMatchers("/login").permitAll()
                 .requestMatchers("/registro").permitAll()
                 .requestMatchers("/login/passBackUp").permitAll()
+                .requestMatchers("/goCardless/access").permitAll()
                 .anyRequest().authenticated();
 
         return http.build();

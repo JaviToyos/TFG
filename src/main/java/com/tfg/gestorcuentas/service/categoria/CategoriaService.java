@@ -32,32 +32,40 @@ public class CategoriaService implements ICategoriaService {
 
     @Override
     public String save(Categoria categoria) {
-        Optional<UsuarioEntity> usuarioOptional = iUsuarioJPARepository.findByUsername(categoria.getUsuario().getUsername());
-        UsuarioEntity usuarioEntity = usuarioOptional.orElseThrow(() -> new IllegalArgumentException());
-
-        if (!validateUsuario(usuarioEntity))
-            throw new IllegalArgumentException(MessageErrors.USER_DATA_EMPTY.getErrorCode());
         if (!validateCategoria(categoria))
             throw new IllegalArgumentException(MessageErrors.CATEGORIA_EMPTY.getErrorCode());
 
-        CategoriaEntity categoriaEntity = new CategoriaEntity();
-        categoriaEntity.setUsuario(usuarioEntity);
-        categoriaEntity.setNombre(categoria.getNombre());
-        categoriaEntity.setBorrado(0);
+        Optional<CategoriaEntity> categoriaBD = iCategoriaJPARepository.findByNombreContainingIgnoreCase(categoria.getNombre());
+        Optional<UsuarioEntity> usuarioOptional = iUsuarioJPARepository.findByUsername(categoria.getUsuario().getUsername());
+        UsuarioEntity usuarioEntity = usuarioOptional.orElseThrow(IllegalArgumentException::new);
 
-        iCategoriaJPARepository.save(categoriaEntity);
+        if(categoriaBD.isPresent()) {
+            if(categoriaBD.get().getBorrado() == 1) {
+                categoriaBD.get().setBorrado(0);
+                iCategoriaJPARepository.save(categoriaBD.get());
+            }else{
+                throw new IllegalStateException(MessageErrors.CATEGORIA_ALREADY_EXISTS.getErrorCode());
+            }
+        }else {
+            CategoriaEntity categoriaEntity = new CategoriaEntity();
+            categoriaEntity.setUsuario(usuarioEntity);
+            categoriaEntity.setNombre(categoria.getNombre());
+            categoriaEntity.setBorrado(0);
+            iCategoriaJPARepository.save(categoriaEntity);
+        }
         return Messages.CATEGORIA_GUARDADA.getMessage();
     }
 
     @Override
     public String modify(Categoria categoria) {
-        if (!validateIdCategoria(categoria.getIdCategoria()) && !validateCategoria(categoria))
+        if (!validateIdCategoria(categoria.getIdCategoria()) || !validateCategoria(categoria))
             throw new IllegalArgumentException(MessageErrors.CATEGORIA_EMPTY.getErrorCode());
 
         Optional<CategoriaEntity> categoriaBD = iCategoriaJPARepository.findById(categoria.getIdCategoria());
 
-        if (categoriaBD.isEmpty())
+        if (categoriaBD.isEmpty()) {
             throw new IllegalStateException(MessageErrors.CATEGORIA_NOT_FOUND.getErrorCode());
+        }
 
         categoriaBD.get().setNombre(categoria.getNombre());
 
@@ -74,11 +82,7 @@ public class CategoriaService implements ICategoriaService {
 
         Optional<UsuarioEntity> entityUsuario = iUsuarioJPARepository.findByUsername(username);
         UsuarioEntity usuario = entityUsuario.orElseThrow(() -> new NoSuchElementException(MessageErrors.USER_NOT_FOUND.getErrorCode()));
-
-        if (validateUsuario(usuario)) {
-            return iCategoriaJPARepository.findByUsuarioAndBorrado(usuario, 0);
-        }
-        return null;
+        return iCategoriaJPARepository.findByUsuarioAndBorrado(usuario, 0);
     }
 
     @Override
@@ -89,24 +93,20 @@ public class CategoriaService implements ICategoriaService {
         Optional<CategoriaEntity> entityCategoria = iCategoriaJPARepository.findById(idCategoria);
         CategoriaEntity categoriaEntity = entityCategoria.orElseThrow(() -> new NoSuchElementException(MessageErrors.CATEGORIA_NOT_FOUND.getErrorCode()));
 
-        if (validateCategoria(categoriaEntity)) {
-            List<CriterioEntity> criterioEntityList = iCriterioJPARepository.findByCategoria_IdAndBorrado(idCategoria, 0);
 
-            criterioEntityList.forEach(criterio -> {
-                criterio.setBorrado(1);
-                iCriterioJPARepository.save(criterio);
-            });
+        List<CriterioEntity> criterioEntityList = iCriterioJPARepository.findByCategoria_IdAndBorrado(idCategoria, 0);
 
-            categoriaEntity.setBorrado(1);
-            iCategoriaJPARepository.save(categoriaEntity);
-            return Messages.CATEGORIA_MODIFIED.getMessage();
-        }
-        return MessageErrors.CATEGORIA_NOT_FOUND.getErrorCode();
+        criterioEntityList.forEach(criterio -> {
+            criterio.setBorrado(1);
+            iCriterioJPARepository.save(criterio);
+        });
+
+        categoriaEntity.setBorrado(1);
+        iCategoriaJPARepository.save(categoriaEntity);
+        return Messages.CATEGORIA_MODIFIED.getMessage();
+
     }
 
-    private static boolean validateUsuario(UsuarioEntity usuario) {
-        return usuario.getUsername() != null;
-    }
 
     private static boolean validateIdCategoria(Integer idCategoria) {
         return idCategoria != null;
@@ -116,9 +116,6 @@ public class CategoriaService implements ICategoriaService {
         return StringUtils.isNotBlank(categoria.getNombre());
     }
 
-    private static boolean validateCategoria(CategoriaEntity categoria) {
-        return categoria.getId() != null;
-    }
 
 
 }

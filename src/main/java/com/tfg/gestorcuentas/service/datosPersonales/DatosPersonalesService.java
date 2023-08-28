@@ -16,8 +16,8 @@ import java.util.Optional;
 
 @Service
 public class DatosPersonalesService implements IDatosPersonalesService {
-    private final IUsuarioJPARepository iUsuarioJPARepository;
 
+    private final IUsuarioJPARepository iUsuarioJPARepository;
     private final IPersonaJPARepository iPersonaJPARepository;
 
     @Autowired
@@ -49,17 +49,22 @@ public class DatosPersonalesService implements IDatosPersonalesService {
         UsuarioEntity usuario = entityUsuario.orElseThrow(() -> new NoSuchElementException(MessageErrors.USER_NOT_FOUND.getErrorCode()));
 
         usuario.setPassword(datosPersonales.getUsuario().getPassword());
-        usuario.setPersona(datosPersonales.getPersona());
 
-        UsuarioEntity usuarioGuardado = iUsuarioJPARepository.save(usuario);
-        usuario.getPersona().setUsuario(usuarioGuardado);
-        iPersonaJPARepository.save(usuario.getPersona());
+        Optional<PersonaEntity> personaEntity = iPersonaJPARepository.findByUsuario(usuario);
+        PersonaEntity persona = personaEntity.orElseThrow(() -> new NoSuchElementException(MessageErrors.PERSON_NOT_FOUND.getErrorCode()));
+
+        persona.setNombre(datosPersonales.getPersona().getNombre());
+        persona.setApellidos(datosPersonales.getPersona().getApellidos());
+        persona.setEmail(datosPersonales.getPersona().getEmail());
+
+        iUsuarioJPARepository.save(usuario);
+        iPersonaJPARepository.save(persona);
 
         return Messages.PERSONAL_DATA_MODIFIED.getMessage();
     }
 
     private static boolean validateUsuario(UsuarioEntity usuario) {
-        return usuario.getUsername() != null && usuario.getPassword() != null;
+        return usuario.getUsername() != null;
     }
 
     private static boolean validatePersona(PersonaEntity persona) {

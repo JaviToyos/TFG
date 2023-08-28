@@ -12,7 +12,7 @@ public class ProveedorEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 48)
     private String name;
 
     public Integer getId() {
@@ -28,6 +28,13 @@ public class ProveedorEntity implements Serializable {
     }
 
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public ProveedorEntity() {}
+
+    public ProveedorEntity(Integer id, String name) {
+        this.id = id;
         this.name = name;
     }
 

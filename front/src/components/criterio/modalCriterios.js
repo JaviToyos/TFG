@@ -26,7 +26,7 @@ const ModalCriterios = ({categoria, criterioList}) => {
             <Dialog header={"Criterios"} visible={visible} style={{width: '30vw', textAlign: 'center'}}
                     onHide={hideDialog} footer={<ModalAddCriterio categoria={categoria}/>}>
                 <div style={{display: 'inline-block', textAlign: 'left', width: '100%'}}>
-                    <DataTable value={filteredCriterioList} style={{margin: '0 auto'}}>
+                    <DataTable value={filteredCriterioList} paginator rows={3} style={{margin: '0 auto'}}>
                         <Column field="nombre" header="Nombre"/>
                         <Column body={(rowData) => (<ModalEditCriterio crit={rowData}/>)}
                                 style={{width: '10%', textAlign: 'center'}}/>

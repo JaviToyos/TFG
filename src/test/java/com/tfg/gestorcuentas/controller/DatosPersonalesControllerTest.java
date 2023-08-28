@@ -111,6 +111,55 @@ public class DatosPersonalesControllerTest {
         Assert.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
+    @Test
+    public void testFindByUsername() {
+        UsuarioEntity usuario = buildUsuarioEntity();
+        PersonaEntity persona = buildPersonaEntity(usuario);
+        DatosPersonales datosPersonales = new DatosPersonales(persona, usuario);
+
+        given(iDatosPersonalesService.findByUsername("javier")).willReturn(datosPersonales);
+
+        ResponseEntity<?> result = datosPersonalesController.findDatosPersonales("javier");
+
+        verify(iDatosPersonalesService).findByUsername("javier");
+
+        Assert.assertEquals(datosPersonales, result.getBody());
+        Assert.assertEquals(HttpStatus.OK, result.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameNoSuchElement() {
+        given(iDatosPersonalesService.findByUsername("javier")).willThrow(NoSuchElementException.class);
+
+        ResponseEntity<?> result = datosPersonalesController.findDatosPersonales("javier");
+
+        verify(iDatosPersonalesService).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameIllegalArgument() {
+        given(iDatosPersonalesService.findByUsername("javier")).willThrow(IllegalArgumentException.class);
+
+        ResponseEntity<?> result = datosPersonalesController.findDatosPersonales("javier");
+
+        verify(iDatosPersonalesService).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameNull() {
+        given(iDatosPersonalesService.findByUsername("javier")).willReturn(null);
+
+        ResponseEntity<?> result = datosPersonalesController.findDatosPersonales("javier");
+
+        verify(iDatosPersonalesService).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
     private static PersonaEntity buildPersonaEntity(UsuarioEntity user) {
         PersonaEntity persona = new PersonaEntity();
         persona.setId(1);

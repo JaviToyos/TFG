@@ -16,12 +16,25 @@ public class ParametroEntity implements Serializable {
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id")
     private ProveedorEntity proveedor;
 
+    @Column(name = "atributo")
     private String atributo;
 
+    @Column(name = "valor")
     private String valor;
 
     public Integer getId() {
         return id;    }
+
+
+    public ParametroEntity() {
+    }
+
+    public ParametroEntity(Integer id, ProveedorEntity proveedor, String atributo, String valor) {
+        this.id = id;
+        this.proveedor = proveedor;
+        this.atributo = atributo;
+        this.valor = valor;
+    }
 
     public void setId(Integer id) {
         this.id = id;

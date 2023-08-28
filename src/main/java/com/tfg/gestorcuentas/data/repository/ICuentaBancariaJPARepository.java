@@ -9,6 +9,5 @@ import java.util.Optional;
 
 public interface ICuentaBancariaJPARepository extends JpaRepository<CuentaBancariaEntity, String> {
         List<CuentaBancariaEntity> findByUsuarioAndBorrado(UsuarioEntity usuario, Integer borrado);
-
         Optional<CuentaBancariaEntity> findByAccountID(String accountId);
 }

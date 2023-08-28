@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 **/front/node_modules/
+.DS_Store
 
 
 ### STS ###

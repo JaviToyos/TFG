@@ -53,6 +53,15 @@ class GoCardlessService {
 
     }
 
+    obtenerMovimientos(tokenGoCardless, idCuenta) {
+        const request = {
+            token: tokenGoCardless,
+            accountId: idCuenta
+        }
+        return api.post('/goCardless/accountTransactions', request);
+
+    }
+
 }
 
 export default new GoCardlessService();

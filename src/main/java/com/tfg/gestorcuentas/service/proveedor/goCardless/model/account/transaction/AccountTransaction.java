@@ -3,23 +3,23 @@ package com.tfg.gestorcuentas.service.proveedor.goCardless.model.account.transac
 import java.io.Serializable;
 
 public class AccountTransaction implements Serializable {
-    private TransactionBooked transactionBooked;
-    private TransactionPending transactionPending;
+    private TransactionBooked booked;
+    private TransactionPending pending;
 
 
     public AccountTransaction() {
     }
 
-    public AccountTransaction(TransactionBooked transactionBooked, TransactionPending transactionPending) {
-        this.transactionBooked = transactionBooked;
-        this.transactionPending = transactionPending;
+    public AccountTransaction(TransactionBooked booked, TransactionPending transactionPending) {
+        this.booked = booked;
+        this.pending = transactionPending;
     }
 
     public TransactionBooked getTransactionBooked() {
-        return transactionBooked;
+        return booked;
     }
 
     public TransactionPending getTransactionPending() {
-        return transactionPending;
+        return pending;
     }
 }

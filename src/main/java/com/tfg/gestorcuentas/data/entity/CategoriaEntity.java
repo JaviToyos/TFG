@@ -18,14 +18,24 @@ public class CategoriaEntity implements Serializable {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER )
+    @ManyToMany(cascade = { CascadeType.ALL }, mappedBy = "categoriaEntitySet")
     private Set<MovimientoEntity> movimientoEntitySet = new HashSet<>();
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 48)
     private String nombre;
 
     @Column(name = "borrado")
     private Integer borrado;
+
+    public CategoriaEntity() {
+    }
+
+    public CategoriaEntity(Integer id, UsuarioEntity usuario, String nombre, Integer borrado) {
+        this.id = id;
+        this.usuario = usuario;
+        this.nombre = nombre;
+        this.borrado = borrado;
+    }
 
     public Integer getId() {
         return id;

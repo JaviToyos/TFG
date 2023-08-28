@@ -82,9 +82,9 @@ public class GoCardlessController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/accountTransactions")
-    public ResponseEntity<?> getAccountTransactions(@RequestBody String userToken, @RequestBody String accountID) {
-        AccountTransaction accountTransaction = goCardlessService.getAccountTransactions(userToken, accountID);
+    @PostMapping(value = "/accountTransactions")
+    public ResponseEntity<?> getAccountTransactions(@RequestBody AccountTransactionRequest request) {
+        AccountTransaction accountTransaction = goCardlessService.getAccountTransactions(request.getToken(), request.getAccountId());
         if (accountTransaction != null) return new ResponseEntity<>(accountTransaction, HttpStatus.OK);
 
         return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);

@@ -1,5 +1,6 @@
 package com.tfg.gestorcuentas.controller;
 
+import com.tfg.gestorcuentas.data.entity.CategoriaEntity;
 import com.tfg.gestorcuentas.data.entity.UsuarioEntity;
 import com.tfg.gestorcuentas.service.categoria.ICategoriaService;
 import com.tfg.gestorcuentas.service.categoria.model.Categoria;
@@ -13,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Collections;
+import java.util.NoSuchElementException;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -103,6 +107,63 @@ public class CategoriaControllerTest {
         verify(service).modify(categoria);
 
         Assert.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testFindByUsername() {
+        CategoriaEntity categoria = new CategoriaEntity();
+        categoria.setId(1);
+        categoria.setNombre("Categoria");
+        categoria.setBorrado(0);
+        categoria.setUsuario(buildUsuarioEntity());
+
+        given(service.findByUsername("javier")).willReturn(Collections.singletonList(categoria));
+
+        ResponseEntity<?> response = categoriaController.findCategoriaByUsername("javier");
+
+        verify(service).findByUsername("javier");
+
+        Assert.assertEquals(Collections.singletonList(categoria), response.getBody());
+        Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameThrowNoSuchElementException() {
+        given(service.findByUsername("javier")).willThrow(NoSuchElementException.class);
+
+        ResponseEntity<?> response = categoriaController.findCategoriaByUsername("javier");
+
+        verify(service).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameThrowIllegalArgumentException() {
+        given(service.findByUsername("javier")).willThrow(IllegalArgumentException.class);
+
+        ResponseEntity<?> response = categoriaController.findCategoriaByUsername("javier");
+
+        verify(service).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    public void testFindByUsernameBadRequest() {
+        CategoriaEntity categoria = new CategoriaEntity();
+        categoria.setId(1);
+        categoria.setNombre("Categoria");
+        categoria.setBorrado(0);
+        categoria.setUsuario(buildUsuarioEntity());
+
+        given(service.findByUsername("javier")).willReturn(null);
+
+        ResponseEntity<?> response = categoriaController.findCategoriaByUsername("javier");
+
+        verify(service).findByUsername("javier");
+
+        Assert.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     private UsuarioEntity buildUsuarioEntity() {

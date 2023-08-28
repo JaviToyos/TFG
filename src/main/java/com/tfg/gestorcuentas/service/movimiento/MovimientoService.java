@@ -45,6 +45,10 @@ public class MovimientoService implements IMovimientoService {
         if (!validateCuentaBancaria(movimiento.getCuentaBancaria()))
             throw new IllegalArgumentException(MessageErrors.ACCOUNT_DATA_EMPTY.getErrorCode());
 
+        Optional<MovimientoEntity> mov = iMovimientoJPARepository.findByIdTransaccion(movimiento.getMovimiento().getIdTransaccion());
+
+        if(mov.isPresent())  return Messages.MOVIMIENTOS_GUARDADO_OK.getMessage();
+
         List<CategoriaEntity> categoriasUsuario = iCategoriaJPARepository.findByUsuario_Id(movimiento
                 .getCuentaBancaria().getUsuario().getId());
 
@@ -74,36 +78,6 @@ public class MovimientoService implements IMovimientoService {
 
         iMovimientoJPARepository.save(movimientoEntity);
         return Messages.MOVIMIENTOS_GUARDADO_OK.getMessage();
-    }
-
-    @Override
-    public String modifyNordigen(Movimiento movimiento) {
-        Set<CategoriaEntity> categoriaEntitySet = new HashSet<>();
-
-        if (!validateMovimiento(movimiento.getMovimiento()))
-            throw new IllegalArgumentException(MessageErrors.MOVIMIENTO_DATA_EMPTY.getErrorCode());
-        if (!validateCuentaBancaria(movimiento.getCuentaBancaria()))
-            throw new IllegalArgumentException(MessageErrors.ACCOUNT_DATA_EMPTY.getErrorCode());
-
-        Optional<MovimientoEntity> movimientoBD = iMovimientoJPARepository.findById(movimiento.getMovimiento().getId());
-
-        List<CategoriaEntity> categoriaEntityList = movimiento.getCategorias();
-
-        for (CategoriaEntity cat: categoriaEntityList) {
-            Optional<CategoriaEntity> categoriaBD = iCategoriaJPARepository.findById(cat.getId());
-            if(categoriaBD.isPresent()) {
-                CategoriaEntity categoriaToSet = new CategoriaEntity();
-                categoriaToSet.setId(categoriaBD.get().getId());
-                categoriaEntitySet.add(categoriaToSet);
-            }
-
-        }
-
-        movimientoBD.get().setCategoriaEntitySet(categoriaEntitySet);
-
-        iMovimientoJPARepository.save(movimientoBD.get());
-        return Messages.MOVIMIENTOS_MODIFICADO_OK.getMessage();
-
     }
 
     @Override

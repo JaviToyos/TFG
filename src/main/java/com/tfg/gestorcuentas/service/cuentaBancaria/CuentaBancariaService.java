@@ -90,10 +90,7 @@ public class CuentaBancariaService implements ICuentaBancariaService {
         Optional<UsuarioEntity> entityUsuario = iUsuarioJPARepository.findByUsername(username);
         UsuarioEntity usuario = entityUsuario.orElseThrow(() -> new NoSuchElementException(MessageErrors.USER_NOT_FOUND.getErrorCode()));
 
-        if (validateUsuario(usuario)) {
-             return iCuentaBancariaJPARepository.findByUsuarioAndBorrado(usuario, 0);
-        }
-        return null;
+        return iCuentaBancariaJPARepository.findByUsuarioAndBorrado(usuario, 0);
     }
 
     @Override

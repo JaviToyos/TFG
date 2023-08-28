@@ -27,10 +27,10 @@ public class CuentaBancariaEntity implements Serializable {
     @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "iban")
+    @Column(name = "iban", length = 48)
     private String iban;
 
-    @Column(name = "moneda")
+    @Column(name = "moneda", length = 16)
     private String moneda;
 
     @Column(name = "cantidad")
@@ -41,6 +41,22 @@ public class CuentaBancariaEntity implements Serializable {
 
     @Column(name = "borrado")
     private Integer borrado;
+
+    public CuentaBancariaEntity() {
+    }
+
+    public CuentaBancariaEntity(Integer id, UsuarioEntity usuario, ProveedorEntity proveedor, String accountID, String nombre, String iban, String moneda, Double cantidad, Date fecha, Integer borrado) {
+        this.id = id;
+        this.usuario = usuario;
+        this.proveedor = proveedor;
+        this.accountID = accountID;
+        this.nombre = nombre;
+        this.iban = iban;
+        this.moneda = moneda;
+        this.cantidad = cantidad;
+        this.fecha = fecha;
+        this.borrado = borrado;
+    }
 
     public Integer getId() {
         return id;

@@ -9,6 +9,8 @@ import MovimientoService from "../../services/movimientoService";
 import './Movimientos.css';
 import {InputText} from "primereact/inputtext";
 import {Tag} from "primereact/tag";
+import GoCardlessService from "../../services/goCardlessService";
+import {Cookies} from "react-cookie";
 
 const ModalMovimiento = ({cuenta}) => {
     const [visible, setVisible] = useState(false);
@@ -16,6 +18,13 @@ const ModalMovimiento = ({cuenta}) => {
     const [filteredMovimientos, setFilteredMovimientos] = useState([]);
     const [error, setError] = useState('');
     const [filterValue, setFilterValue] = useState('');
+    const [transactionIds, setTransactionIds] = useState([]);
+    const [debAccounts, setDebAccounts] = useState([]);
+    const [amounts, setAmounts] = useState([]);
+    const [currencies, setCurrencies] = useState([]);
+    const [dates, setDates] = useState([]);
+    const [informations, setInformations] = useState([]);
+
 
     useEffect(() => {
         MovimientoService.buscarPorIdCuenta(cuenta.id)
@@ -35,6 +44,29 @@ const ModalMovimiento = ({cuenta}) => {
         );
         setFilteredMovimientos(filtered);
     }, [filterValue, movimientos]);
+
+    useEffect(() => {
+        transactionIds.map((id, index) => {
+            let data = {
+                movimiento : {
+                    cuentaBancaria : {
+                        id : cuenta.id
+                    },
+                    informacionMovimiento: informations[index],
+                    idTransaccion: id,
+                    cantidad : amounts[index],
+                    divisa: currencies[index],
+                    destinatario: debAccounts[index],
+                    fecha: dates[index]
+                }
+            }
+            MovimientoService.save(data)
+                .then(()=> {
+
+                });
+        });
+        hideDialog();
+    }, [transactionIds]);
 
     function nombreCatBodyTemplate(rowData) {
         return rowData.categorias.map((categoria) => (
@@ -58,8 +90,36 @@ const ModalMovimiento = ({cuenta}) => {
         showDialog();
     }
 
+    function getCookie(name) {
+        const cookies = new Cookies();
+        return cookies.get(name);
+    }
+
     function actualizarMovimientos() {
-        showDialog();
+        let tranIds = [];
+        let debAccount = [];
+        let amount = [];
+        let currency = [];
+        let date = [];
+        let information = [];
+
+        GoCardlessService.obtenerMovimientos(getCookie('tokenGoCardless'), cuenta.accountID)
+            .then((res) => {
+                res.data.booked.map((transac) => {
+                    tranIds.push(transac.transactionId);
+                    debAccount.push(transac.debtorAccount.iban);
+                    amount.push(transac.transactionAmount.amount);
+                    currency.push(transac.transactionAmount.currency);
+                    date.push(transac.bookingDate);
+                    information.push(transac.remittanceInformationUnstructured);
+                });
+                setTransactionIds(tranIds);
+                setDebAccounts(debAccount);
+                setAmounts(amount);
+                setCurrencies(currency);
+                setDates(date);
+                setInformations(information);
+            }) .catch(() => setError('Ahora mismo no podemos obtener tus movimientos. Inténtelo de nuevo más tarde'));
     }
 
 

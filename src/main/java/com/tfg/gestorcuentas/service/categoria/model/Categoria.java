@@ -15,6 +15,11 @@ public class Categoria {
         this.nombre = nombre;
     }
 
+    public Categoria(Integer idCategoria, String nombre) {
+        this.idCategoria = idCategoria;
+        this.nombre = nombre;
+    }
+
     private Categoria(Builder builder) {
         usuario = builder.usuario;
         nombre = builder.nombre;

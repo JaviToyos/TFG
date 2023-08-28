@@ -91,12 +91,9 @@ public class CriterioService implements ICriterioService {
         Optional<CriterioEntity> entityCriterio = iCriterioJPARepository.findById(idCriterio);
         CriterioEntity criterioEntity = entityCriterio.orElseThrow(() -> new NoSuchElementException(MessageErrors.CRITERIO_NOT_FOUND.getErrorCode()));
 
-        if (validateCriterio(criterioEntity)) {
-            criterioEntity.setBorrado(1);
-            iCriterioJPARepository.save(criterioEntity);
-            return Messages.CRITERIO_MODIFIED.getMessage();
-        }
-        return MessageErrors.CRITERIO_NOT_FOUND.getErrorCode();
+        criterioEntity.setBorrado(1);
+        iCriterioJPARepository.save(criterioEntity);
+        return Messages.CRITERIO_MODIFIED.getMessage();
     }
 
 

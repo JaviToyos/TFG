@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface IMovimientoService {
     String saveNordigen(Movimiento movimiento);
-    String modifyNordigen(Movimiento movimiento);
     List<MovimientoDTO> findByIdCuenta(Integer idCuenta);
 
 }

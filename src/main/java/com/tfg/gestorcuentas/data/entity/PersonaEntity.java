@@ -16,20 +16,33 @@ public class PersonaEntity implements Serializable {
     @JoinColumn(name = "id_usuario", referencedColumnName = "id")
     private UsuarioEntity usuario;
 
-    @Column(name = "dni")
+    @Column(name = "dni", length = 9)
     private String dni;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", length = 128)
     private String nombre;
 
     @Column(name = "apellidos")
     private String apellidos;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 128)
     private String email;
 
     @Column(name = "borrado")
     private Integer borrado;
+
+    public PersonaEntity() {
+    }
+
+    public PersonaEntity(Integer id, UsuarioEntity usuario, String dni, String nombre, String apellidos, String email, Integer borrado) {
+        this.id = id;
+        this.usuario = usuario;
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.email = email;
+        this.borrado = borrado;
+    }
 
     public Integer getId() {
         return id;

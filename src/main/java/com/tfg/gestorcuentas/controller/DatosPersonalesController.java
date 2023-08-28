@@ -45,11 +45,8 @@ public class DatosPersonalesController {
             DatosPersonales findUser = iDatosPersonalesService.findByUsername(username);
             if (findUser != null)
                 return new ResponseEntity<>(findUser, HttpStatus.OK);
-        } catch (final NoSuchElementException exception) {
+        } catch (final NoSuchElementException | IllegalArgumentException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-        } catch (final IllegalArgumentException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
